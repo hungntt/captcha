@@ -1,7 +1,9 @@
 import cv2
 import typing
 import numpy as np
-
+import pandas as pd
+from tqdm import tqdm
+from mltu.configs import BaseModelConfigs
 from mltu.inferenceModel import OnnxInferenceModel
 from mltu.utils.text_utils import ctc_decoder, get_cer
 
@@ -24,15 +26,12 @@ class ImageToWordModel(OnnxInferenceModel):
 
 
 if __name__ == "__main__":
-    import pandas as pd
-    from tqdm import tqdm
-    from mltu.configs import BaseModelConfigs
-
-    configs = BaseModelConfigs.load("Models/02_captcha_to_text/202212211205/configs.yaml")
+    folder_name = "202304281150"
+    configs = BaseModelConfigs.load(f"Models/02_captcha_to_text/{folder_name}/configs.yaml")
 
     model = ImageToWordModel(model_path=configs.model_path, char_list=configs.vocab)
 
-    df = pd.read_csv("Models/02_captcha_to_text/202212211205/val.csv").values.tolist()
+    df = pd.read_csv(f"Models/02_captcha_to_text/{folder_name}/val.csv").values.tolist()
 
     accum_cer = []
     for image_path, label in tqdm(df):
